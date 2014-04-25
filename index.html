@@ -4,10 +4,14 @@
     <link rel='stylesheet' href='styles.css'>
   </head>
   <body>
-    <div class="scoreboard">
-      <div class="high">High score: <span>0</span></div>
-      <div class="current">Current score: <span>0</span></div>
-      <div class="collisions">Collisions: <span>0</span></div>
+    <div class="container">
+        <h1>Collider</h1>
+        <h3>Don't get hit!</h3>
+
+        <div id="scores">
+            <h3>High Score: <span id="best-score"></span></h3>
+            <h3>Current Score: <span id="current-score"></span></h3>
+        </div>
     </div>
     <script src="d3.js" charset="utf-8"></script>
     <script src="watchout.js"></script>
