@@ -153,5 +153,5 @@ doSetInterval(function () {
 // [x] Implement enemy movement
 // [x] Create a player
 // [x] Make player draggable
-// [ ] Detect collisions
+// [x] Detect collisions
 // [ ] Implement score
