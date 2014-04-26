@@ -162,11 +162,3 @@ doSetInterval(function () {
   stats.score += 1;
   updateScore([stats.score]);
 }, 50);
-
-// [x] Create master element
-// [x] Create enemies
-// [x] Implement enemy movement
-// [x] Create a player
-// [x] Make player draggable
-// [x] Detect collisions
-// [x] Implement score
