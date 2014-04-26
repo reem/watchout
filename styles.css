@@ -1,14 +1,14 @@
 /* your beautiful css styling goes here! */
 
-/* Note: an asteroid image is included in this repo. 
+/* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
 
 .h1, .h2, .h3 {
     font-family: sans-serif;
 }
 
-.body {
-    background-color: grey;
+.div {
+    border: red 1px;
 }
 
 .game {
