@@ -64,7 +64,6 @@ var updateScore = function (data) {
 };
 
 var onCollision = function () {
-  console.log("Collided!");
   updateHighScore([0]);
   stats.score = 0;
   updateScore([stats.score]);
@@ -170,4 +169,4 @@ doSetInterval(function () {
 // [x] Create a player
 // [x] Make player draggable
 // [x] Detect collisions
-// [ ] Implement score
+// [x] Implement score
