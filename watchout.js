@@ -28,8 +28,15 @@ Circle.prototype.constructor = Circle;
 var playerLocation = new Circle(
   opts.width / 2, opts.height / 2, 10);
 
-var updateHighScore = function () {
+var updateHighScore = function (data) {
   stats.bestScore = Math.max(stats.bestScore, stats.score);
+
+  var score = d3.select("#best-score")
+    .data(data);
+
+  score.enter().append("text")
+    .text(function () { return stats.bestScore; });
+  score.text(function () { return stats.bestScore; });
 };
 
 var game = d3.select(".game").append("svg")
@@ -47,11 +54,20 @@ var checkCollision = function (enemy, callback) {
   }
 };
 
+var updateScore = function (data) {
+  var score = d3.select("#current-score")
+    .data(data);
+
+  score.enter().append("text")
+    .text(function (d) { return d; });
+  score.text(function (d) { return d; });
+};
+
 var onCollision = function () {
   console.log("Collided!");
-  updateHighScore();
+  updateHighScore([0]);
   stats.score = 0;
-  updateScore(stats.score);
+  updateScore([stats.score]);
 };
 
 var updateEnemies = function (data) {
@@ -145,7 +161,7 @@ doSetInterval(function () {
 
 doSetInterval(function () {
   stats.score += 1;
-  updateScore(stats.score);
+  updateScore([stats.score]);
 }, 50);
 
 // [x] Create master element
