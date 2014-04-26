@@ -1,5 +1,10 @@
 var d3 = d3;
 
+// Set up our game options.
+// We will reference these numbers all over our
+// implementation, so it's important that we keep
+// them in one place so they are easy to change in
+// the future.
 var opts = {
   height: 450,
   width: 700,
@@ -7,43 +12,64 @@ var opts = {
   padding: 20
 };
 
+// We need a place to keep the score
+// without polluting the global namespace.
 var stats = {
   score: 0,
   bestScore: 0
 };
 
+// A Vector type that we will use for convenience.
+// Since this doesn't implement any methods
+// it's just a shorthand for creating an object
+// with x and y keys.
 var Vector = function (x, y) {
   this.x = x;
   this.y = y;
 };
 
+// An extension of our Vector object to hold a radius.
+// The location of the circle is kept in the x and y
+// attributes, and it's radius is kept in r.
 var Circle = function (x, y, r) {
   Vector.call(this, x, y);
   this.r = r;
 };
 
+// Pseudoclassical inheritance boilerplate.
 Circle.prototype = Object.create(Vector.prototype);
 Circle.prototype.constructor = Circle;
 
+// This variable will hold the Circle object that
+// represents the model of the player throughout
+// this implementation.
 var playerLocation = new Circle(
   opts.width / 2, opts.height / 2, 10);
 
+// A D3 handler for updating the score quickly.
+// Nothing too interesting in here.
 var updateHighScore = function (data) {
+  // Update our best score to the highest score yet - either the current
+  // high score or a new one.
   stats.bestScore = Math.max(stats.bestScore, stats.score);
 
   var score = d3.select("#best-score")
     .data(data);
 
   score.enter().append("text")
-    .text(function () { return stats.bestScore; });
+    .text(function () { return stats.bestScore; }); // Quick hack to ignore data.
   score.text(function () { return stats.bestScore; });
 };
 
+// Create the svg element we will be doing all of our graphics work in.
 var game = d3.select(".game").append("svg")
     .attr("width", opts.width)
     .attr("height", opts.height)
     .attr("padding", opts.padding);
 
+// Takes an enemy and a callback and will call the callback with
+// the enemy if there is a collision between the enemy
+// and the player.
 var checkCollision = function (enemy, callback) {
   var xDiff = parseFloat(enemy.attr("cx")) - playerLocation.x;
   var yDiff = parseFloat(enemy.attr("cy")) - playerLocation.y;
@@ -54,6 +80,8 @@ var checkCollision = function (enemy, callback) {
   }
 };
 
+// D3 updater for increasing the current-score.
+// Gets called in our setInterval event-loop.
 var updateScore = function (data) {
   var score = d3.select("#current-score")
     .data(data);
@@ -63,6 +91,8 @@ var updateScore = function (data) {
   score.text(function (d) { return d; });
 };
 
+// Our callback that we want to execute
+// whenever a collision is detected.
 var onCollision = function () {
   updateHighScore([0]);
   stats.score = 0;
@@ -85,6 +115,8 @@ var updateEnemies = function (data) {
       .attr("r", function (d) { return d.r; })
     .transition()
       .duration(1000)
+      // This tween re-implements the moving animation
+      // and detects collisions each frame.
       .tween("custom", function(d) {
         var enemy = d3.select(this);
 
@@ -96,8 +128,10 @@ var updateEnemies = function (data) {
         var endPos = d;
 
         return function (t) {
+          // Call our callback every frame.
           checkCollision(enemy, onCollision);
 
+          // Update our position by scaling by t.
           enemy.attr("cx", startPos.x + (endPos.x - startPos.x)*t)
             .attr("cy", startPos.y + (endPos.y - startPos.y)*t);
         };
@@ -106,6 +140,7 @@ var updateEnemies = function (data) {
   enemies.exit().remove();
 };
 
+// Create the player - called once.
 var createPlayer = function (data) {
   var player = game.selectAll(".player")
     .data(data);
@@ -126,6 +161,8 @@ var createPlayer = function (data) {
     }));
 };
 
+// Pack an array to the length of the first parameter with an
+// optional fill parameter.
 var pack = function (length, fill) {
   var arr = [];
   for (var i = 0; i < length; i++) {
@@ -134,19 +171,24 @@ var pack = function (length, fill) {
   return arr;
 };
 
+// Set Interval, except calls the function immediately
+// before starting the interval.
 var doSetInterval = function (func, time) {
   func();
   return setInterval(func, time);
 };
 
+// Generates a random int between two values.
 var between = function (min, max) {
   return Math.floor(Math.random()*(max-min+1)+min);
 };
 
+// Create the player.
 createPlayer([playerLocation]);
 
 var enemyLocations;
 
+// Start the enemy animation loop.
 doSetInterval(function () {
   enemyLocations = pack(opts.enemies).map(function () {
     return new Circle(
@@ -158,6 +200,7 @@ doSetInterval(function () {
   updateEnemies(enemyLocations);
 }, 1500);
 
+// Start the score animation loop.
 doSetInterval(function () {
   stats.score += 1;
   updateScore([stats.score]);
